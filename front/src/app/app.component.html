@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+  <!-- Navbar principal -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow">
+    <div class="container-fluid">
+      <!-- Brand -->
+      <a class="navbar-brand fw-bold" href="#">
+        <i class="bi bi-traffic-light-fill me-2 text-warning"></i>
+        {{title}}
+      </a>
+
+      <!-- Botón toggle para móvil -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Menú de navegación -->
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item" *ngFor="let item of menuItems">
+            <a class="nav-link px-3" [routerLink]="item.path" routerLinkActive="active" [title]="item.description">
+              <i [class]="'bi ' + item.icon + ' me-2'"></i>
+              {{item.title}}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb" class="bg-light border-bottom">
+    <div class="container-fluid">
+      <ol class="breadcrumb mb-0 py-2">
+        <li class="breadcrumb-item">
+          <i class="bi bi-house-fill me-1"></i>
+          <a routerLink="/" class="text-decoration-none">Inicio</a>
+        </li>
+        <li class="breadcrumb-item active" *ngFor="let item of menuItems">
+          <span *ngIf="isActiveRoute(item.path)">
+            <i [class]="'bi ' + item.icon + ' me-1'"></i>
+            {{item.title}}
+          </span>
+        </li>
+      </ol>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <main class="min-vh-100 bg-light">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-light py-4 mt-auto">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-6">
+          <h6 class="text-warning">
+            <i class="bi bi-traffic-light-fill me-2"></i>
+            Sistema de Gestión de Tránsito
+          </h6>
+          <p class="mb-0 text-muted small">
+            Gestión eficiente de vehículos, propietarios y papeletas de infracción.
+          </p>
+        </div>
+        <div class="col-md-6 text-md-end">
+          <small class="text-muted">
+            <i class="bi bi-calendar3 me-1"></i>
+            © {{currentYear}} - Todos los derechos reservados
+          </small>
+          <br>
+          <small class="text-muted">
+            <i class="bi bi-code-slash me-1"></i>
+            Desarrollado con Angular y Bootstrap
+          </small>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>

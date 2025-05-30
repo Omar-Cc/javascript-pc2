@@ -1,0 +1,145 @@
+<div class="container-fluid p-4">
+  <div class="row">
+    <div class="col-12">
+      <h2 class="text-success mb-4">
+        <i class="bi bi-people-fill me-2"></i>
+        Lista de Vehículos y Propietarios
+      </h2>
+    </div>
+  </div>
+
+  <!-- Búsqueda por propietario -->
+  <div class="row mb-4">
+    <div class="col-lg-8 mx-auto">
+      <div class="card">
+        <div class="card-header bg-success text-white">
+          <i class="bi bi-search me-2"></i>
+          Buscar por Propietario
+        </div>
+        <div class="card-body">
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="bi bi-person-search"></i>
+            </span>
+            <input type="text" [(ngModel)]="filtroNombre" placeholder="Ingrese el nombre del propietario"
+              class="form-control" (keyup.enter)="buscarPorPropietario()">
+            <button (click)="buscarPorPropietario()" [disabled]="loading" class="btn btn-success">
+              <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+              <i *ngIf="!loading" class="bi bi-search me-2"></i>
+              {{loading ? 'Buscando...' : 'Buscar'}}
+            </button>
+            <button (click)="limpiarBusqueda()" class="btn btn-outline-secondary">
+              <i class="bi bi-x-circle me-1"></i>
+              Mostrar Todos
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mensaje de error -->
+  <div *ngIf="error" class="row">
+    <div class="col-12">
+      <div class="alert alert-warning alert-dismissible fade show">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        {{error}}
+        <button type="button" class="btn-close" (click)="error = ''"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lista de vehículos -->
+  <div *ngIf="vehiculosFiltrados.length > 0" class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <span>
+            <i class="bi bi-car-front-fill me-2"></i>
+            Vehículos Registrados ({{vehiculosFiltrados.length}})
+          </span>
+          <span class="badge bg-light text-dark">
+            Total: {{vehiculosFiltrados.length}} vehículo(s)
+          </span>
+        </div>
+
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-striped table-hover mb-0">
+              <thead class="table-dark">
+                <tr>
+                  <th scope="col">
+                    <i class="bi bi-123 me-1"></i>
+                    Placa
+                  </th>
+                  <th scope="col">
+                    <i class="bi bi-person me-1"></i>
+                    Propietario
+                  </th>
+                  <th scope="col">
+                    <i class="bi bi-palette me-1"></i>
+                    Color
+                  </th>
+                  <th scope="col">
+                    <i class="bi bi-car-front me-1"></i>
+                    Modelo
+                  </th>
+                  <th scope="col" class="text-center">
+                    <i class="bi bi-gear me-1"></i>
+                    Acciones
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let vehiculo of vehiculosFiltrados; let i = index"
+                  [class]="i % 2 === 0 ? 'table-light' : ''">
+                  <td class="fw-bold text-primary">
+                    <i class="bi bi-tag-fill me-1"></i>
+                    {{vehiculo.NROPLA}}
+                  </td>
+                  <td>
+                    <i class="bi bi-person-circle me-1"></i>
+                    {{vehiculo.NOMPRO}}
+                  </td>
+                  <td>
+                    <span class="badge" [ngClass]="{
+                            'bg-danger': vehiculo.COLOR?.toLowerCase() === 'rojo',
+                            'bg-primary': vehiculo.COLOR?.toLowerCase() === 'azul',
+                            'bg-success': vehiculo.COLOR?.toLowerCase() === 'verde',
+                            'bg-dark': vehiculo.COLOR?.toLowerCase() === 'negro',
+                            'bg-secondary': vehiculo.COLOR?.toLowerCase() === 'plomo',
+                            'bg-warning text-dark': !['rojo','azul','verde','negro','plomo'].includes(vehiculo.COLOR?.toLowerCase() || '')
+                          }">
+                      {{vehiculo.COLOR}}
+                    </span>
+                  </td>
+                  <td>
+                    <i class="bi bi-car-front me-1"></i>
+                    {{vehiculo.MODELO}}
+                  </td>
+                  <td class="text-center">
+                    <button (click)="verInfracciones(vehiculo.NROPLA || '')" class="btn btn-outline-primary btn-sm"
+                      title="Ver infracciones del vehículo">
+                      <i class="bi bi-clipboard-check me-1"></i>
+                      Ver Infracciones
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estado de carga -->
+  <div *ngIf="loading" class="row">
+    <div class="col-12 text-center">
+      <div class="spinner-border text-success" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+      <p class="mt-2 text-muted">Cargando vehículos...</p>
+    </div>
+  </div>
+</div>

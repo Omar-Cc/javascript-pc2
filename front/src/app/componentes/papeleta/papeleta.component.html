@@ -1,0 +1,183 @@
+<div class="container-fluid p-4">
+  <div class="row">
+    <div class="col-12">
+      <h2 class="text-warning mb-4">
+        <i class="bi bi-file-text-fill me-2"></i>
+        Consulta de Papeleta por Número
+      </h2>
+    </div>
+  </div>
+
+  <!-- Búsqueda por número de papeleta -->
+  <div class="row mb-4">
+    <div class="col-lg-8 mx-auto">
+      <div class="card">
+        <div class="card-header bg-warning text-dark">
+          <i class="bi bi-search me-2"></i>
+          Buscar Papeleta
+        </div>
+        <div class="card-body">
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="bi bi-file-earmark-text"></i>
+            </span>
+            <input type="text" [(ngModel)]="numeroPapeleta" placeholder="Ingrese el número de papeleta (ej: 100001)"
+              class="form-control" (keyup.enter)="buscarPapeleta()">
+            <button (click)="buscarPapeleta()" [disabled]="loading" class="btn btn-warning text-dark">
+              <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+              <i *ngIf="!loading" class="bi bi-search me-2"></i>
+              {{loading ? 'Buscando...' : 'Buscar'}}
+            </button>
+            <button (click)="limpiarBusqueda()" class="btn btn-outline-secondary">
+              <i class="bi bi-x-circle me-1"></i>
+              Limpiar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mensaje de error -->
+  <div *ngIf="error" class="row">
+    <div class="col-12">
+      <div class="alert alert-danger alert-dismissible fade show">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        {{error}}
+        <button type="button" class="btn-close" (click)="error = ''"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detalle de la papeleta -->
+  <div *ngIf="papeleta" class="row">
+    <div class="col-lg-8 mx-auto">
+      <div class="card border-warning">
+        <div class="card-header bg-warning text-dark text-center">
+          <h4 class="mb-0">
+            <i class="bi bi-file-text-fill me-2"></i>
+            Papeleta de Infracción
+          </h4>
+        </div>
+
+        <div class="card-body">
+          <div class="row g-3">
+            <!-- Información principal -->
+            <div class="col-md-6">
+              <div class="card bg-light">
+                <div class="card-header bg-primary text-white">
+                  <i class="bi bi-info-circle me-2"></i>
+                  Información de la Papeleta
+                </div>
+                <div class="card-body">
+                  <div class="mb-3">
+                    <strong>
+                      <i class="bi bi-calendar3 me-2 text-primary"></i>
+                      Fecha:
+                    </strong>
+                    <div class="ms-4">{{papeleta.fecha | date:'dd/MM/yyyy'}}</div>
+                  </div>
+                  <div class="mb-3">
+                    <strong>
+                      <i class="bi bi-exclamation-octagon me-2 text-danger"></i>
+                      Infracción:
+                    </strong>
+                    <div class="ms-4">
+                      <span class="badge bg-danger fs-6">{{papeleta.infraccion}}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <strong>
+                      <i class="bi bi-cash me-2 text-success"></i>
+                      Importe:
+                    </strong>
+                    <div class="ms-4">
+                      <span class="text-success fw-bold fs-5">
+                        S/. {{papeleta.importe | number:'1.2-2'}}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Información del vehículo y propietario -->
+            <div class="col-md-6">
+              <div class="card bg-light">
+                <div class="card-header bg-success text-white">
+                  <i class="bi bi-car-front me-2"></i>
+                  Información del Vehículo
+                </div>
+                <div class="card-body">
+                  <div class="mb-3">
+                    <strong>
+                      <i class="bi bi-tag me-2 text-primary"></i>
+                      Placa:
+                    </strong>
+                    <div class="ms-4">
+                      <span class="badge bg-primary fs-6">{{papeleta.placa}}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <strong>
+                      <i class="bi bi-person me-2 text-info"></i>
+                      Propietario:
+                    </strong>
+                    <div class="ms-4">{{papeleta.propietario}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Información del policía -->
+            <div class="col-12">
+              <div class="card bg-light">
+                <div class="card-header bg-info text-white">
+                  <i class="bi bi-shield-check me-2"></i>
+                  Información del Agente
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <strong>
+                        <i class="bi bi-person-badge me-2 text-info"></i>
+                        Nombre del Policía:
+                      </strong>
+                      <div class="ms-4">{{papeleta.policia}}</div>
+                    </div>
+                    <div class="col-md-6">
+                      <strong>
+                        <i class="bi bi-shield me-2 text-info"></i>
+                        Patente:
+                      </strong>
+                      <div class="ms-4">
+                        <span class="badge bg-info">{{papeleta.patente}}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-footer text-center bg-light">
+          <small class="text-muted">
+            <i class="bi bi-clock me-1"></i>
+            Papeleta consultada el {{fechaConsulta | date:'dd/MM/yyyy HH:mm'}}
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estado de carga -->
+  <div *ngIf="loading" class="row">
+    <div class="col-12 text-center">
+      <div class="spinner-border text-warning" role="status">
+        <span class="visually-hidden">Buscando...</span>
+      </div>
+      <p class="mt-2 text-muted">Buscando papeleta...</p>
+    </div>
+  </div>
+</div>

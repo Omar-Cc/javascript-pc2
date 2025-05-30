@@ -1,0 +1,201 @@
+<div class="container-fluid p-4">
+  <div class="row">
+    <div class="col-12">
+      <h2 class="text-primary mb-4">
+        <i class="bi bi-clipboard-check-fill me-2"></i>
+        Consulta de Papeletas por Vehículo
+      </h2>
+
+      <!-- Botón para volver -->
+      <div class="mb-3">
+        <button (click)="volverAVehiculos()" class="btn btn-outline-secondary">
+          <i class="bi bi-arrow-left me-2"></i>
+          Volver a Vehículos
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-6 mb-3">
+      <!-- Selector de vehículo -->
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <i class="bi bi-car-front-fill me-2"></i>
+          Seleccionar Vehículo
+        </div>
+        <div class="card-body">
+          <select [(ngModel)]="vehiculoSeleccionado" (change)="onVehiculoChange()" class="form-select">
+            <option value="">-- Seleccione un vehículo --</option>
+            <option *ngFor="let vehiculo of vehiculos" [value]="vehiculo.NROPLA">
+              {{vehiculo.NROPLA}} - {{vehiculo.NOMPRO}} ({{vehiculo.MODELO}} {{vehiculo.COLOR}})
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6 mb-3">
+      <!-- Búsqueda por placa -->
+      <div class="card">
+        <div class="card-header bg-success text-white">
+          <i class="bi bi-search me-2"></i>
+          Buscar por Placa
+        </div>
+        <div class="card-body">
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="bi bi-123"></i>
+            </span>
+            <input type="text" [(ngModel)]="placaBusqueda" placeholder="Ingrese la placa (ej: V00001)"
+              class="form-control" [class.is-invalid]="error && !loading">
+            <button (click)="buscarPapeletasPorPlaca()" [disabled]="loading" class="btn btn-success">
+              <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+              <i *ngIf="!loading" class="bi bi-search me-2"></i>
+              {{loading ? 'Buscando...' : 'Buscar'}}
+            </button>
+            <button (click)="limpiarBusqueda()" class="btn btn-outline-secondary">
+              <i class="bi bi-x-circle me-1"></i>
+              Limpiar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mensaje de error -->
+  <div *ngIf="error" class="row">
+    <div class="col-12">
+      <div class="alert alert-danger alert-dismissible fade show">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        {{error}}
+        <button type="button" class="btn-close" (click)="error = ''"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resultados -->
+  <div *ngIf="papeletas.length > 0" class="row mt-4">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+          <span>
+            <i class="bi bi-list-ul me-2"></i>
+            Papeletas Encontradas ({{papeletas.length}})
+          </span>
+          <span class="badge bg-warning text-dark fs-6">
+            <i class="bi bi-currency-dollar me-1"></i>
+            Total: S/. {{calcularTotalMultas() | number:'1.2-2'}}
+          </span>
+        </div>
+
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-striped table-hover mb-0">
+              <thead class="table-dark">
+                <tr>
+                  <th scope="col">
+                    <i class="bi bi-file-text me-1"></i>
+                    Papeleta
+                  </th>
+                  <th scope="col">
+                    <i class="bi bi-exclamation-octagon me-1"></i>
+                    Infracción
+                  </th>
+                  <th scope="col">
+                    <i class="bi bi-calendar3 me-1"></i>
+                    Fecha
+                  </th>
+                  <th scope="col" class="text-end">
+                    <i class="bi bi-cash me-1"></i>
+                    Monto
+                  </th>
+                  <th *ngIf="papeletas[0]?.propietario" scope="col">
+                    <i class="bi bi-person me-1"></i>
+                    Propietario
+                  </th>
+                  <th *ngIf="papeletas[0]?.policia" scope="col">
+                    <i class="bi bi-shield-check me-1"></i>
+                    Policía
+                  </th>
+                  <th scope="col" class="text-center">
+                    <i class="bi bi-gear me-1"></i>
+                    Acciones
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let papeleta of papeletas; let i = index" [class]="i % 2 === 0 ? 'table-light' : ''">
+                  <td class="fw-bold text-primary">{{papeleta.papeleta}}</td>
+                  <td>
+                    <span class="badge bg-danger">{{papeleta.infraccion}}</span>
+                  </td>
+                  <td>
+                    <i class="bi bi-calendar-date me-1"></i>
+                    {{papeleta.fecha | date:'dd/MM/yyyy'}}
+                  </td>
+                  <td class="text-end fw-bold text-success">
+                    S/. {{papeleta.monto | number:'1.2-2'}}
+                  </td>
+                  <td *ngIf="papeleta.propietario">
+                    <i class="bi bi-person-circle me-1"></i>
+                    {{papeleta.propietario}}
+                  </td>
+                  <td *ngIf="papeleta.policia">
+                    <i class="bi bi-shield me-1"></i>
+                    {{papeleta.policia}}
+                  </td>
+                  <td class="text-center">
+                    <button (click)="verDetallePapeleta(papeleta.papeleta || '')" class="btn btn-outline-warning btn-sm"
+                      title="Ver detalle completo">
+                      <i class="bi bi-eye me-1"></i>
+                      Ver Detalle
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card-footer bg-light">
+          <div class="row">
+            <div class="col-md-8">
+              <small class="text-muted">
+                <i class="bi bi-info-circle me-1"></i>
+                Mostrando {{papeletas.length}} papeleta(s) encontrada(s)
+              </small>
+            </div>
+            <div class="col-md-4 text-end">
+              <strong class="text-primary">
+                <i class="bi bi-calculator me-1"></i>
+                Total a pagar: S/. {{calcularTotalMultas() | number:'1.2-2'}}
+              </strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estado de carga inicial -->
+  <div *ngIf="loading && papeletas.length === 0" class="row">
+    <div class="col-12 text-center">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+      <p class="mt-2 text-muted">Cargando información...</p>
+    </div>
+  </div>
+
+  <!-- Mensaje cuando no hay resultados -->
+  <div *ngIf="!loading && papeletas.length === 0 && !error && placaBusqueda" class="row">
+    <div class="col-12">
+      <div class="alert alert-info text-center">
+        <i class="bi bi-info-circle-fill me-2"></i>
+        No se encontraron papeletas para la placa: <strong>{{placaBusqueda}}</strong>
+      </div>
+    </div>
+  </div>
+</div>
